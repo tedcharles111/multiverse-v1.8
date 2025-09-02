@@ -38,6 +38,7 @@ from langchain.schema import (
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
+from gpt_engineer.tools.openrouter_wrapper import call_openrouter
 from gpt_engineer.core.token_usage import TokenUsageLog
 
 # Type hint for a chat message
@@ -92,6 +93,7 @@ class AI:
         azure_endpoint=None,
         streaming=True,
         vision=False,
+        use_openrouter=False,
     ):
         """
         Initialize the AI class.
@@ -107,6 +109,7 @@ class AI:
         self.azure_endpoint = azure_endpoint
         self.model_name = model_name
         self.streaming = streaming
+        self.use_openrouter = use_openrouter or "deepseek" in model_name.lower()
         self.vision = (
             ("vision-preview" in model_name)
             or ("gpt-4-turbo" in model_name and "preview" not in model_name)
@@ -240,6 +243,25 @@ class AI:
         if not self.vision:
             messages = self._collapse_text_messages(messages)
 
+        # Use OpenRouter for DeepSeek models
+        if self.use_openrouter:
+            try:
+                # Convert LangChain messages to OpenRouter format
+                openrouter_messages = []
+                for msg in messages:
+                    role = "assistant" if msg.type == "ai" else msg.type
+                    content = msg.content
+                    if isinstance(content, list):
+                        content = content[0].get("text", "") if content else ""
+                    openrouter_messages.append({"role": role, "content": content})
+                
+                result = call_openrouter(openrouter_messages, model=self.model_name)
+                response_content = result["choices"][0]["message"]["content"]
+                response = AIMessage(content=response_content)
+            except Exception as e:
+                print(f"OpenRouter failed, falling back to default: {e}")
+                response = self.backoff_inference(messages)
+        else:
         response = self.backoff_inference(messages)
 
         self.token_usage_log.update_log(
@@ -343,6 +365,11 @@ class AI:
         BaseChatModel
             The created chat model.
         """
+        if self.use_openrouter:
+            # For OpenRouter models, we'll use a dummy ChatOpenAI instance
+            # The actual API calls are handled by the openrouter_wrapper
+            return ChatOpenAI(model="gpt-3.5-turbo", temperature=self.temperature)
+            
         if self.azure_endpoint:
             return AzureChatOpenAI(
                 azure_endpoint=self.azure_endpoint,
