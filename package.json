@@ -1,0 +1,29 @@
+{
+  "name": "multiverse-ai-web-builder",
+  "version": "1.0.0",
+  "description": "AI-powered web builder using DeepSeek models",
+  "main": "index.html",
+  "scripts": {
+    "start": "python web-ui/app.py",
+    "dev": "python web-ui/app.py",
+    "install-deps": "pip install -r web-ui/requirements.txt",
+    "test": "python -m pytest tests/",
+    "build": "echo 'No build step required for this project'"
+  },
+  "keywords": [
+    "ai",
+    "web-builder",
+    "deepseek",
+    "openrouter",
+    "website-generator"
+  ],
+  "author": "Multiverse AI Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tedcharles111/multiverse-v1.8.git"
+  },
+  "engines": {
+    "python": ">=3.10"
+  }
+}
