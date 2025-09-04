@@ -10,7 +10,7 @@ from flask import Flask, request, jsonify, send_from_directory, render_template_
 from pathlib import Path
 
 app = Flask(__name__)
-GPTE_CMD = os.environ.get("GPTE_CMD", "gpte")
+GPTE_CMD = os.environ.get("GPTE_CMD", "python -m gpt_engineer.applications.cli.main")
 OUTPUT_ROOT = os.path.abspath(os.path.join(os.getcwd(), "web_outputs"))
 os.makedirs(OUTPUT_ROOT, exist_ok=True)
 
