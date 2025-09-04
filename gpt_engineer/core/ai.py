@@ -39,6 +39,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
 from gpt_engineer.tools.openrouter_wrapper import call_openrouter
+from gpt_engineer.tools.openrouter_wrapper import call_openrouter_reasoning, call_openrouter_coding
 from gpt_engineer.core.token_usage import TokenUsageLog
 
 # Type hint for a chat message
@@ -94,6 +95,7 @@ class AI:
         streaming=True,
         vision=False,
         use_openrouter=False,
+        task_type='coding',
     ):
         """
         Initialize the AI class.
@@ -109,7 +111,8 @@ class AI:
         self.azure_endpoint = azure_endpoint
         self.model_name = model_name
         self.streaming = streaming
-        self.use_openrouter = use_openrouter or "deepseek" in model_name.lower()
+        self.use_openrouter = use_openrouter or "deepseek" in model_name.lower() or "qwen" in model_name.lower()
+        self.task_type = task_type
         self.vision = (
             ("vision-preview" in model_name)
             or ("gpt-4-turbo" in model_name and "preview" not in model_name)
@@ -255,13 +258,19 @@ class AI:
                         content = content[0].get("text", "") if content else ""
                     openrouter_messages.append({"role": role, "content": content})
                 
-                result = call_openrouter(openrouter_messages, model=self.model_name)
+                # Use appropriate wrapper based on task type
+                if self.task_type == 'reasoning':
+                    result = call_openrouter_reasoning(openrouter_messages)
+                else:
+                    result = call_openrouter_coding(openrouter_messages)
+                    
                 response_content = result["choices"][0]["message"]["content"]
                 response = AIMessage(content=response_content)
             except Exception as e:
                 print(f"OpenRouter failed, falling back to default: {e}")
                 response = self.backoff_inference(messages)
         else:
+            response = self.backoff_inference(messages)
         response = self.backoff_inference(messages)
 
         self.token_usage_log.update_log(

@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULtiverse AI - AI Web Builder</title>
+    <title>Multiverse AI - Powerful Web Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
     <style>
         :root {
             --primary: #6e44ff;
@@ -21,6 +28,8 @@
             --border-radius: 12px;
             --shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             --transition: all 0.3s ease;
+            --sidebar-width: 300px;
+            --header-height: 60px;
         }
 
         * {
@@ -31,47 +40,36 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
+            background: var(--darker);
             color: var(--light);
             min-height: 100vh;
             line-height: 1.6;
+            overflow: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header Styles */
-        header {
-            background: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: var(--dark);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .header-content {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--light);
-        }
-
-        .logo span {
-            color: var(--primary);
         }
 
         .logo i {
@@ -80,42 +78,23 @@
             -webkit-text-fill-color: transparent;
         }
 
-        nav ul {
+        .header-controls {
             display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        nav a {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        nav a:hover {
-            color: var(--primary);
-        }
-
-        .auth-buttons {
-            display: flex;
+            align-items: center;
             gap: 15px;
         }
 
         .btn {
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
             border: none;
-            font-size: 16px;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-primary {
@@ -123,830 +102,745 @@
             color: white;
         }
 
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* Hero Section */
-        .hero {
-            padding: 80px 0;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--gray);
-            margin-bottom: 40px;
-        }
-
-        .hero-buttons {
+        /* Main Layout */
+        .main-container {
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-bottom: 40px;
+            height: calc(100vh - var(--header-height));
+            margin-top: var(--header-height);
         }
 
-        .btn-large {
-            padding: 15px 30px;
-            font-size: 1.1rem;
-        }
-
-        .hero-demo {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 40px;
-            box-shadow: var(--shadow);
-        }
-
-        /* Features Section */
-        .section-title {
-            text-align: center;
-            margin: 60px 0 40px;
-            font-size: 2.5rem;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .feature-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        /* How It Works */
-        .how-it-works {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .step-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        /* Templates Section */
-        .templates {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .template-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
+            flex-direction: column;
             overflow: hidden;
-            box-shadow: var(--shadow);
         }
 
-        .template-img {
-            height: 200px;
-            background: linear-gradient(135deg, #5e72e4, #ff9190);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .template-content {
+        .sidebar-header {
             padding: 20px;
-        }
-
-        .template-content h3 {
-            margin-bottom: 10px;
-        }
-
-        /* Pricing Section */
-        .pricing {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .pricing-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .pricing-card:hover {
-            transform: scale(1.03);
-        }
-
-        .pricing-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 20px 0;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .pricing-features {
-            list-style: none;
-            margin: 20px 0;
-        }
-
-        .pricing-features li {
-            padding: 10px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Testimonials */
-        .testimonials {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .testimonial-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
-        }
-
-        .testimonial-text {
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        /* FAQ Section */
-        .faq {
-            max-width: 800px;
-            margin: 0 auto 60px;
-        }
-
-        .faq-item {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .faq-question {
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
             padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        }
+
+        .reasoning-panel {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .reasoning-title {
+            font-size: 14px;
             font-weight: 600;
-        }
-
-        .faq-answer {
-            padding: 0 20px 20px;
-            color: var(--gray);
-            display: none;
-        }
-
-        /* CTA Section */
-        .cta {
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 60px 0;
-            border-radius: var(--border-radius);
-            margin-bottom: 60px;
-            box-shadow: var(--shadow);
-        }
-
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--darker);
-            padding: 60px 0 30px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column ul li {
             margin-bottom: 10px;
-        }
-
-        .footer-column a {
-            color: var(--gray);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-column a:hover {
             color: var(--primary);
         }
 
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-icons a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background: var(--card-bg);
-            border-radius: 50%;
-            color: var(--light);
-            transition: var(--transition);
-        }
-
-        .social-icons a:hover {
-            background: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .reasoning-content {
+            font-size: 13px;
+            line-height: 1.5;
             color: var(--gray);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            nav ul {
-                gap: 15px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        /* AI Builder Interface */
-        .ai-builder {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin: 60px 0;
-            box-shadow: var(--shadow);
-        }
-
-        .builder-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .builder-container {
-            display: flex;
-            gap: 30px;
-        }
-
-        .builder-input {
-            flex: 1;
-        }
-
-        .builder-preview {
-            flex: 1;
-            background: white;
-            border-radius: var(--border-radius);
-            min-height: 400px;
-            color: #333;
-            padding: 20px;
-        }
-
-        .input-group {
+        .prompt-section {
             margin-bottom: 20px;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .input-group input, .input-group select, .input-group textarea {
+        .prompt-input {
             width: 100%;
-            padding: 12px 15px;
-            border-radius: var(--border-radius);
+            min-height: 100px;
+            padding: 12px;
+            border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             color: var(--light);
-            font-size: 16px;
-        }
-
-        .input-group textarea {
-            min-height: 120px;
+            font-size: 14px;
             resize: vertical;
+            font-family: inherit;
         }
 
         .generate-btn {
             width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            margin-top: 20px;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
+        .generate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(110, 68, 255, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* File Explorer */
+        .file-explorer {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .file-explorer-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-explorer-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .add-file-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .file-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .file-item:hover .file-actions {
+            opacity: 1;
+        }
+
+        .file-action {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .file-action:hover {
+            color: var(--light);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--dark);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Code Editor */
+        .code-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #272822;
+        }
+
+        .editor-tabs {
+            display: flex;
+            background: var(--darker);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .editor-tab {
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-tab.active {
+            color: var(--light);
+            border-bottom-color: var(--primary);
+        }
+
+        .editor-tab:hover {
+            color: var(--light);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-close {
+            margin-left: 5px;
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+            color: var(--danger);
+        }
+
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        /* Preview */
+        .preview-container {
+            flex: 1;
+            background: white;
+            position: relative;
+            display: none;
+        }
+
+        .preview-container.active {
+            display: block;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .preview-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--gray);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 30px;
+            background: var(--darker);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .model-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--success);
+        }
+
+        .model-indicator.fallback {
+            color: var(--warning);
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .builder-container {
+            .sidebar {
+                width: 100%;
+                position: fixed;
+                top: var(--header-height);
+                left: -100%;
+                z-index: 999;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main-content {
+                width: 100%;
+            }
+
+            .content-area {
                 flex-direction: column;
             }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal-close:hover {
+            color: var(--light);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            font-size: 14px;
+        }
+
+        /* Project Info */
+        .project-info {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .project-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .project-description {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-cube"></i>
-                    <div>MULtiverse <span>AI</span></div>
-                </div>
-                <nav>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#templates">Templates</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#testimonials">Testimonials</a></li>
-                    </ul>
-                </nav>
-                <div class="auth-buttons">
-                    <button class="btn btn-outline">Log In</button>
-                    <button class="btn btn-primary">Sign Up Free</button>
-                </div>
-            </div>
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-cube"></i>
+            <span>Multiverse AI</span>
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Build Websites With AI In Seconds</h1>
-            <p>MULtiverse AI transforms your ideas into fully functional websites with the power of artificial intelligence. No coding required.</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary btn-large">Start Building Free</button>
-                <button class="btn btn-outline btn-large">Watch Demo</button>
-            </div>
-            <div class="hero-demo">
-                <p>See how MULtiverse AI creates a professional website in under 2 minutes</p>
-                <div style="height: 200px; background: linear-gradient(135deg, #3434a1, #8044ff); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; margin-top: 20px;">
-                    <i class="fas fa-play-circle" style="font-size: 3rem;"></i>
-                </div>
-            </div>
+        <div class="header-controls">
+            <button class="btn btn-outline" id="save-project">
+                <i class="fas fa-save"></i>
+                Save Project
+            </button>
+            <button class="btn btn-outline" id="new-project">
+                <i class="fas fa-plus"></i>
+                New Project
+            </button>
+            <button class="btn btn-primary" id="preview-new-tab">
+                <i class="fas fa-external-link-alt"></i>
+                Open Preview
+            </button>
         </div>
-    </section>
+    </div>
 
-    <!-- AI Builder Interface -->
-    <section class="ai-builder">
-        <div class="container">
-            <div class="builder-header">
-                <h2>AI Website Builder</h2>
-                <p>Describe your website and let our AI create it for you</p>
-            </div>
-            <div class="builder-container">
-                <div class="builder-input">
-                    <div class="input-group">
-                        <label for="website-type">Website Type</label>
-                        <select id="website-type">
-                            <option value="business">Business</option>
-                            <option value="portfolio">Portfolio</option>
-                            <option value="ecommerce">E-commerce</option>
-                            <option value="blog">Blog</option>
-                            <option value="event">Event</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="color-theme">Color Theme</label>
-                        <select id="color-theme">
-                            <option value="professional">Professional</option>
-                            <option value="creative">Creative</option>
-                            <option value="minimal">Minimal</option>
-                            <option value="vibrant">Vibrant</option>
-                            <option value="dark">Dark</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="website-description">Describe Your Website</label>
-                        <textarea id="website-description" placeholder="Example: I need a portfolio website for my photography business with a dark theme and sections for my best work, about me, and contact information..."></textarea>
-                    </div>
-                    <button class="btn btn-primary generate-btn">Generate Website</button>
-                </div>
-                <div class="builder-preview">
-                    <h3>Website Preview</h3>
-                    <p>Your website will appear here after generation</p>
-                    <div style="text-align: center; margin-top: 50px;">
-                        <i class="fas fa-image" style="font-size: 3rem; color: #ccc;"></i>
-                        <p>Preview will appear here</p>
-                    </div>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="project-info">
+                    <div class="project-name" id="project-name">My Website</div>
+                    <div class="project-description" id="project-description">AI-generated website</div>
                 </div>
             </div>
-        </div>
-    </section>
+            
+            <div class="sidebar-content">
+                <!-- AI Reasoning Panel -->
+                <div class="reasoning-panel">
+                    <div class="reasoning-title">
+                        <i class="fas fa-brain"></i>
+                        AI Reasoning
+                    </div>
+                    <div class="reasoning-content" id="reasoning-content">
+                        Ready to help you build amazing websites. Describe what you want to create!
+                    </div>
+                </div>
 
-    <!-- Features Section -->
-    <section id="features">
-        <div class="container">
-            <h2 class="section-title">Powerful Features</h2>
-            <div class="features">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3>AI-Powered Builder</h3>
-                    <p>Our advanced AI understands your requirements and builds complete websites with minimal input.</p>
+                <!-- Prompt Section -->
+                <div class="prompt-section">
+                    <label for="prompt-input" class="form-label">
+                        <i class="fas fa-magic"></i>
+                        Describe your website or changes
+                    </label>
+                    <textarea 
+                        id="prompt-input" 
+                        class="prompt-input" 
+                        placeholder="Example: Create a modern portfolio website for a photographer with a dark theme, gallery section, about page, and contact form..."
+                    ></textarea>
+                    <button class="generate-btn" id="generate-btn">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        Generate with AI
+                    </button>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-palette"></i>
-                    </div>
-                    <h3>Smart Styling</h3>
-                    <p>Automatically generated color schemes, typography, and layouts that follow design best practices.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Fully Responsive</h3>
-                    <p>Every website created with MULtiverse AI is perfectly optimized for all devices and screen sizes.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>Lightning Fast</h3>
-                    <p>Generate complete websites in seconds instead of spending hours designing and coding.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Secure Hosting</h3>
-                    <p>All websites include SSL certificates, CDN, and reliable hosting with 99.9% uptime.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>SEO Optimized</h3>
-                    <p>Built-in SEO tools help your website rank higher in search results from day one.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- How It Works -->
-    <section id="how-it-works">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <div class="how-it-works">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Describe Your Needs</h3>
-                    <p>Tell our AI what kind of website you want to build, your preferences, and any specific requirements.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>AI Generates Your Site</h3>
-                    <p>Our AI engine processes your request and creates a complete website with content, images, and functionality.</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Customize & Publish</h3>
-                    <p>Fine-tune your website with our easy-to-use editor and publish with a single click.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Templates Section -->
-    <section id="templates">
-        <div class="container">
-            <h2 class="section-title">Professional Templates</h2>
-            <div class="templates">
-                <div class="template-card">
-                    <div class="template-img">Business</div>
-                    <div class="template-content">
-                        <h3>Corporate Pro</h3>
-                        <p>Professional design for businesses and corporations.</p>
-                        <button class="btn btn-outline" style="margin-top: 15px;">Use Template</button>
-                    </div>
-                </div>
-                <div class="template-card">
-                    <div class="template-img">Portfolio</div>
-                    <div class="template-content">
-                        <h3>Creative Portfolio</h3>
-                        <p>Showcase your work with this stunning portfolio template.</p>
-                        <button class="btn btn-outline" style="margin-top: 15px;">Use Template</button>
-                    </div>
-                </div>
-                <div class="template-card">
-                    <div class="template-img">E-commerce</div>
-                    <div class="template-content">
-                        <h3>Online Store</h3>
-                        <p>Complete e-commerce solution with product listings and cart.</p>
-                        <button class="btn btn-outline" style="margin-top: 15px;">Use Template</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing">
-        <div class="container">
-            <h2 class="section-title">Simple Pricing</h2>
-            <div class="pricing">
-                <div class="pricing-card">
-                    <h3>Starter</h3>
-                    <div class="price">Free</div>
-                    <p>Perfect for trying out MULtiverse AI</p>
-                    <ul class="pricing-features">
-                        <li>1 AI-generated website</li>
-                        <li>Basic customization</li>
-                        <li>MULtiverse subdomain</li>
-                        <li>Standard support</li>
-                    </ul>
-                    <button class="btn btn-outline">Get Started</button>
-                </div>
-                <div class="pricing-card">
-                    <h3>Pro</h3>
-                    <div class="price">$19/mo</div>
-                    <p>For professionals and growing businesses</p>
-                    <ul class="pricing-features">
-                        <li>10 AI-generated websites</li>
-                        <li>Advanced customization</li>
-                        <li>Custom domain</li>
-                        <li>Priority support</li>
-                        <li>Basic SEO tools</li>
-                    </ul>
-                    <button class="btn btn-primary">Get Started</button>
-                </div>
-                <div class="pricing-card">
-                    <h3>Enterprise</h3>
-                    <div class="price">$49/mo</div>
-                    <p>For agencies and large organizations</p>
-                    <ul class="pricing-features">
-                        <li>Unlimited websites</li>
-                        <li>Full customization</li>
-                        <li>Multiple custom domains</li>
-                        <li>24/7 premium support</li>
-                        <li>Advanced SEO & analytics</li>
-                    </ul>
-                    <button class="btn btn-primary">Get Started</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section id="testimonials">
-        <div class="container">
-            <h2 class="section-title">What Users Say</h2>
-            <div class="testimonials">
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        "MULtiverse AI saved me countless hours of development time. I was able to create a professional website for my business in under an hour!"
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SJ</div>
-                        <div>
-                            <h4>Sarah Johnson</h4>
-                            <p>Small Business Owner</p>
+                <!-- File Explorer -->
+                <div class="file-explorer">
+                    <div class="file-explorer-header">
+                        <div class="file-explorer-title">
+                            <i class="fas fa-folder"></i>
+                            Project Files
                         </div>
+                        <button class="add-file-btn" id="add-file-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        "As a designer, I'm impressed by the quality of the websites MULtiverse AI creates. The design choices are consistently on point."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">MR</div>
-                        <div>
-                            <h4>Michael Rodriguez</h4>
-                            <p>UX Designer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        "I've tried several AI website builders, and MULtiverse AI is by far the most intuitive and powerful. The results speak for themselves."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">AL</div>
-                        <div>
-                            <h4>Amanda Lee</h4>
-                            <p>Marketing Director</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq">
-        <div class="container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <div class="faq">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        How does MULtiverse AI work? <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        MULtiverse AI uses advanced machine learning algorithms to understand your requirements and generate complete, functional websites. Simply describe what you need, and our AI does the rest.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Do I need coding skills to use MULtiverse AI? <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        No coding skills are required! MULtiverse AI is designed for everyone, from complete beginners to professional developers.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Can I customize the websites generated by AI? <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        Yes, all websites come with our easy-to-use visual editor that allows you to customize every aspect of your site without touching code.
-                    </div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">
-                        What if I don't like the website the AI creates? <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        You can either ask the AI to regenerate with different parameters or use our editor to make any changes you want.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Build Your Website?</h2>
-            <p>Join thousands of users creating amazing websites with AI</p>
-            <button class="btn btn-large" style="background: white; color: var(--primary); margin-top: 30px;">Get Started For Free</button>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>MULtiverse AI</h3>
-                    <p>The next generation AI website builder that helps you create professional websites in seconds.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Product</h3>
-                    <ul>
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Templates</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Use Cases</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
+                    <ul class="file-list" id="file-list">
+                        <!-- Files will be populated here -->
                     </ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2023 MULtiverse AI. All rights reserved.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="view-toggle">
+                    <button class="toggle-btn active" id="code-toggle">
+                        <i class="fas fa-code"></i>
+                        Code
+                    </button>
+                    <button class="toggle-btn" id="preview-toggle">
+                        <i class="fas fa-eye"></i>
+                        Preview
+                    </button>
+                </div>
+                <div class="header-controls">
+                    <button class="btn btn-outline" id="format-code">
+                        <i class="fas fa-magic"></i>
+                        Format
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Code Editor -->
+                <div class="code-editor" id="code-editor">
+                    <div class="editor-tabs" id="editor-tabs">
+                        <!-- Tabs will be populated here -->
+                    </div>
+                    <div class="editor-container">
+                        <textarea id="code-textarea"></textarea>
+                    </div>
+                </div>
+
+                <!-- Preview -->
+                <div class="preview-container" id="preview-container">
+                    <div class="preview-loading" id="preview-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading preview...</p>
+                    </div>
+                    <iframe id="preview-iframe" class="preview-iframe"></iframe>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span id="current-file">No file selected</span>
+            <span id="cursor-position">Ln 1, Col 1</span>
+        </div>
+        <div class="status-right">
+            <div class="model-indicator" id="model-indicator">
+                <i class="fas fa-robot"></i>
+                <span id="model-name">DeepSeek R1</span>
+            </div>
+            <span id="token-usage">Tokens: 0/1800</span>
+        </div>
+    </div>
+
+    <!-- New File Modal -->
+    <div class="modal" id="new-file-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New File</h3>
+                <button class="modal-close" id="close-new-file-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">File Name</label>
+                <input type="text" class="form-input" id="new-file-name" placeholder="e.g., style.css, script.js, about.html">
+            </div>
+            <div class="form-group">
+                <label class="form-label">File Type</label>
+                <select class="form-select" id="new-file-type">
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="js">JavaScript</option>
+                    <option value="txt">Text</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="create-file-btn" style="width: 100%;">
+                Create File
+            </button>
+        </div>
+    </div>
+
+    <!-- New Project Modal -->
+    <div class="modal" id="new-project-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Project</h3>
+                <button class="modal-close" id="close-new-project-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Project Name</label>
+                <input type="text" class="form-input" id="new-project-name" placeholder="My Awesome Website">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Project Type</label>
+                <select class="form-select" id="new-project-type">
+                    <option value="business">Business Website</option>
+                    <option value="portfolio">Portfolio</option>
+                    <option value="ecommerce">E-commerce</option>
+                    <option value="blog">Blog</option>
+                    <option value="landing">Landing Page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input" id="new-project-description" rows="3" placeholder="Describe your project..."></textarea>
+            </div>
+            <button class="btn btn-primary" id="create-project-btn" style="width: 100%;">
+                Create Project
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
 
     <script src="script.js"></script>
 </body>
