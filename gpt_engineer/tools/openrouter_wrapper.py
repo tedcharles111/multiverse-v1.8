@@ -20,7 +20,7 @@ MODELS = {
     'reasoning_fallback': {
         'name': 'qwen/qwen3-30b-a3b:free', 
         'max_tokens': 1800,
-        'context_limit': 131000
+        'context_limit': 130000
     },
     'coding_fallback': {
         'name': 'qwen/qwen-2.5-coder-32b-instruct:free',
@@ -30,7 +30,7 @@ MODELS = {
     'final_fallback': {
         'name': 'qwen/qwen3-coder:free',
         'max_tokens': 1800,
-        'context_limit': 128000
+        'context_limit': 127000
     }
 }
 

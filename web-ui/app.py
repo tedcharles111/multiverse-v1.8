@@ -10,7 +10,7 @@ from flask import Flask, request, jsonify, send_from_directory, render_template_
 from pathlib import Path
 
 app = Flask(__name__)
-GPTE_CMD = os.environ.get("GPTE_CMD", "python -m gpt_engineer.applications.cli.main")
+GPTE_CMD = os.environ.get("GPTE_CMD", "gpte")
 OUTPUT_ROOT = os.path.abspath(os.path.join(os.getcwd(), "web_outputs"))
 os.makedirs(OUTPUT_ROOT, exist_ok=True)
 
@@ -78,7 +78,7 @@ def generate():
         # Set environment variables for DeepSeek/Qwen models
         env = os.environ.copy()
         env['OPENROUTER_KEY'] = os.environ.get('OPENROUTER_KEY', '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')
-        env['MODEL_NAME'] = 'deepseek/deepseek-r1-0528:free'
+        env['MODEL_NAME'] = os.environ.get('MODEL_NAME', 'deepseek/deepseek-r1-0528:free')
         env['LOCAL_MODEL'] = 'true'
         
         # Run the GPT Engineer CLI with improved mode if files exist
@@ -86,7 +86,7 @@ def generate():
         
         try:
             completed = subprocess.run(
-                [GPTE_CMD, project_dir, mode_flag, '--model', 'deepseek/deepseek-r1-0528:free', '--no_execution', '--lite'],
+                ['python', '-m', 'gpt_engineer.applications.cli.main', project_dir, mode_flag, '--model', env['MODEL_NAME'], '--no_execution', '--lite'],
                 capture_output=True,
                 text=True,
                 timeout=300,  # 5 minute timeout
