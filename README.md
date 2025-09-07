@@ -1,6 +1,6 @@
 # Multiverse AI Web Builder
 
-A powerful AI-powered web builder that creates complete, professional websites from simple descriptions. Built on GPT-Engineer with enhanced web development capabilities and free DeepSeek/Qwen models.
+Based on GPT-Engineer, enhanced for web development with AI.
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/gpt-engineer-org/gpt-engineer?style=social)](https://github.com/gpt-engineer-org/gpt-engineer)
 [![Discord Follow](https://dcbadge.vercel.app/api/server/8tcDQ89Ej2?style=flat)](https://discord.gg/8tcDQ89Ej2)
@@ -9,116 +9,36 @@ A powerful AI-powered web builder that creates complete, professional websites f
 ![GitHub Release](https://img.shields.io/github/v/release/gpt-engineer-org/gpt-engineer)
 [![Twitter Follow](https://img.shields.io/twitter/follow/antonosika?style=social)](https://twitter.com/antonosika)
 
-## 🚀 Multiverse AI Web Builder
+## Multiverse AI Web Builder
 
-A next-generation AI web builder inspired by Lovable AI, featuring a complete IDE experience with live preview, agentic reasoning, and powerful code generation capabilities.
+An AI-powered web builder that creates complete, professional websites from simple descriptions. Built on the GPT-Engineer foundation with enhanced web development capabilities.
 
-### ✨ Key Features
+### 🚀 Key Features
 
-- **Full IDE Experience**: Complete code editor with syntax highlighting and live preview
-- **Agentic Reasoning**: AI explains its thinking process in real-time
-- **Dual View Mode**: Switch between code editor and live preview instantly
-- **Manual & AI Editing**: Edit code manually or through natural language prompts
+- **AI-Powered Generation**: Describe your website and watch AI build it
 - **Professional Templates**: Business, portfolio, e-commerce, and more
 - **Responsive Design**: Mobile-first, works on all devices
 - **Modern Tech Stack**: HTML5, CSS3, JavaScript with best practices
-- **Project Management**: Save, load, and manage multiple projects
-- **File Management**: Create, edit, and delete files seamlessly
-- **Free AI Models**: Uses DeepSeek and Qwen models via OpenRouter
-- **Open in New Tab**: Preview your website in a separate window
+- **Free DeepSeek Models**: No API costs for basic usage
+- **Live Preview**: See your website as it's being built
 
-### 🤖 AI Models & Fallbacks
+### 🤖 AI Models
 
-This project uses free models via OpenRouter with intelligent fallbacks:
-
-**Primary Model:**
-- `deepseek/deepseek-r1-0528:free` (128k context, 1800 max tokens)
-
-**Fallback Models:**
-- **Reasoning**: `qwen/qwen3-30b-a3b:free` (131k context)
-- **Coding**: `qwen/qwen-2.5-coder-32b-instruct:free` (128k context)
-- **Final**: `qwen/qwen3-coder:free` (128k context)
+This project now uses free DeepSeek models via OpenRouter:
+- **Primary**: `deepseek/deepseek-r1-0528:free`
+- **Fallback**: `deepseek/deepseek-r1-0528-qwen3-8b:free`
 
 **Setup:**
 1. Create an [OpenRouter account](https://openrouter.ai)
 2. Copy your API key
-3. Set `OPENROUTER_KEY` in your environment variables or use the provided key
+3. Set `OPENROUTER_KEY` in your environment variables
+### 🌐 Web Interface
 
-### 🌐 Web Builder Interface
-
-The Multiverse AI Web Builder features:
-
-**Left Sidebar:**
-- **AI Reasoning Panel**: See how the AI thinks and plans
-- **Prompt Input**: Describe changes in natural language
-- **File Explorer**: Manage project files with create/delete functionality
-
-**Main Area:**
-- **Code Editor**: Full-featured IDE with syntax highlighting
-- **Live Preview**: Real-time preview of your website
-- **Tab Management**: Work with multiple files simultaneously
-
-**Header Controls:**
-- **Save Project**: Persist your work
-- **New Project**: Start fresh projects
-- **Open Preview**: View in new tab
-
-### 🚀 Quick Start
-
-1. **Install Dependencies:**
-   ```bash
-   pip install -r web-ui/requirements.txt
-   ```
-
-2. **Set Environment Variables:**
-   ```bash
-   export OPENROUTER_KEY=your_api_key_here
-   ```
-
-3. **Start the Web Builder:**
-   ```bash
-   python web-ui/app.py
-   ```
-
-4. **Open Browser:**
-   Navigate to `http://localhost:3000`
-
-### 💡 Usage Examples
-
-**Create a New Website:**
-```
-Create a modern portfolio website for a photographer with:
-- Dark theme with purple accents
-- Hero section with background image
-- Gallery grid for photos
-- About section
-- Contact form
-- Smooth animations
-```
-
-**Modify Existing Code:**
-```
-Add a navigation menu to the header with smooth scrolling
-Change the color scheme to blue and green
-Add a footer with social media links
-```
-
-### 🛠️ Technical Features
-
-- **Smart Model Selection**: Automatically chooses the best model for each task
-- **Context Management**: Handles large codebases within token limits
-- **Error Recovery**: Graceful fallbacks when models are unavailable
-- **Real-time Updates**: Live preview updates as you type
-- **Project Persistence**: Save and restore complete projects
-- **File Management**: Full CRUD operations on project files
-
-### 🎯 Architecture
-
-```
-Frontend (HTML/CSS/JS) → Flask Backend → OpenRouter API → DeepSeek/Qwen Models
-                     ↓
-                GPT Engineer Core → Enhanced Web Prompts → Generated Code
-```
+The web builder includes a beautiful, modern interface where users can:
+- Select website types and themes
+- Describe their requirements in natural language  
+- Preview generated websites in real-time
+- Download complete project files
 
 gpt-engineer lets you:
 - Specify software in natural language
