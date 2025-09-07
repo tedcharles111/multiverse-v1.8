@@ -1,21 +1,25 @@
 {
-  "name": "multiverse-ai-web-builder",
+  "name": "multiverse-ai-web-builder-ide",
   "version": "1.0.0",
-  "description": "AI-powered web builder using DeepSeek models",
+  "description": "Powerful AI web builder with full IDE experience, inspired by Lovable AI",
   "main": "index.html",
   "scripts": {
     "start": "python web-ui/app.py",
     "dev": "python web-ui/app.py",
-    "install-deps": "pip install -r web-ui/requirements.txt",
+    "install": "pip install -r web-ui/requirements.txt",
     "test": "python -m pytest tests/",
-    "build": "echo 'No build step required for this project'"
+    "build": "echo 'Web builder ready - no build step required'"
   },
   "keywords": [
     "ai",
     "web-builder",
+    "ide",
+    "code-editor",
     "deepseek",
+    "qwen",
     "openrouter",
-    "website-generator"
+    "website-generator",
+    "lovable-ai-inspired"
   ],
   "author": "Multiverse AI Team",
   "license": "MIT",
